@@ -3,38 +3,23 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, PermissionsAndroid } f
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 
 const App = () => {
-  const [imagePickerResponse, setImagePickerResponse] = useState(null);
-  const [takeImagePickerResponse, setTakeImagePickerResponse] = useState(null);
+  const [pickerResponse, setPickerResponse] = useState(null);
+  const [openImageBase64, setBase64] = useState("");
 
-  const [openImageBase64, setOpenImageBase64] = useState("");
-  const [takeImageBase64, setTakeImageBase64] = useState("");
-
-  // imagePicker
   useEffect(() => {
-    if (imagePickerResponse !== null) {
-      const {didCancel} = imagePickerResponse;
+    if (pickerResponse !== null) {
+      const {didCancel} = pickerResponse;
 
       if (!didCancel) {
-        setOpenImageBase64(imagePickerResponse.assets[0].base64);
+        setBase64(pickerResponse.assets[0].base64);
       }
     }
-  }, [imagePickerResponse])
+
+  }, [pickerResponse])
 
   useEffect(() => {
     requestCameraPermission();
   }, [])
-
-  // takeImagePicker
-  useEffect(() => {
-    if (takeImagePickerResponse !== null) {
-      const {didCancel} = takeImagePickerResponse;
-
-      if (!didCancel) {
-        setTakeImageBase64(takeImagePickerResponse.assets[0].base64);
-      }
-    }
-  }, [takeImagePickerResponse])
-
 
   const requestCameraPermission = async () => {
     try {
@@ -65,7 +50,7 @@ const App = () => {
       includeBase64: true,
     };
 
-    launchImageLibrary(options, setImagePickerResponse);
+    launchImageLibrary(options, setPickerResponse);
   })
 
   const onTakeImage = useCallback(() => {
@@ -75,14 +60,12 @@ const App = () => {
       includeBase64: true,
     };
 
-    launchCamera(options, setTakeImagePickerResponse);
+    launchCamera(options, setPickerResponse);
   })
 
   return (
     <View style={{flex: 1}}> 
-      <View style={{flex: 1}}>
-        <TouchableOpacity onPress={() => {onImageLibraryOpen()}}>
-          <Text>Click to open image!</Text>
+      <View style={{flex: 3}}>
           <Image
             style={{width: 300, height: 300}}
             source={{
@@ -90,18 +73,13 @@ const App = () => {
             }}
           >
           </Image>
-        </TouchableOpacity>
       </View>
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-evenly'}}>
         <TouchableOpacity onPress={() => {onTakeImage()}}>
           <Text>Click to take image!</Text>
-          <Image
-            style={{width: 300, height: 300}}
-            source={{
-              uri: 'data:image/png;base64,' + takeImageBase64,
-            }}
-          >
-          </Image>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {onImageLibraryOpen()}}>
+          <Text>Click to open image!</Text>
         </TouchableOpacity>
       </View>
     </View>
