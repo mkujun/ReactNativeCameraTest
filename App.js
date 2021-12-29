@@ -1,5 +1,5 @@
 import React, {useEffect, useCallback, useState} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, PermissionsAndroid } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, PermissionsAndroid, Platform } from 'react-native';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 
 const App = () => {
@@ -18,10 +18,12 @@ const App = () => {
   }, [pickerResponse])
 
   useEffect(() => {
-    requestCameraPermission();
+    if (Platform.OS == 'android') {
+      requestCameraPermissionAndroid();
+    }
   }, [])
 
-  const requestCameraPermission = async () => {
+  const requestCameraPermissionAndroid = async () => {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -64,7 +66,7 @@ const App = () => {
   })
 
   return (
-    <View style={{flex: 1}}> 
+    <View style={{flex: 1, backgroundColor: 'white'}}> 
       <View style={{flex: 3}}>
           <Image
             style={{width: 300, height: 300}}
